@@ -7,34 +7,40 @@ export class AesGcmCipher {
   private ctr: bigint = 0n;
 
   constructor(rawKey: Uint8Array) {
-    if (!(rawKey instanceof Uint8Array) || ![16, 24, 32].includes(rawKey.length)) {
-      throw new Error("AES key must be 128/192/256-bit Uint8Array");
+    if (
+      !(rawKey instanceof Uint8Array) ||
+      ![16, 24, 32].includes(rawKey.length)
+    ) {
+      throw new Error('AES key must be 128/192/256-bit Uint8Array');
     }
 
     this.keyP = crypto.subtle.importKey(
-      "raw",
+      'raw',
       toArrayBuffer(rawKey),
-      { name: "AES-GCM" },
+      { name: 'AES-GCM' },
       false,
-      ["encrypt", "decrypt"]
+      ['encrypt', 'decrypt'],
     );
 
     this.salt4 = crypto.getRandomValues(new Uint8Array(4));
   }
 
   async encrypt(plaintext: Uint8Array): Promise<Uint8Array> {
-    if (!(plaintext instanceof Uint8Array)) throw new Error("plaintext must be Uint8Array");
+    if (!(plaintext instanceof Uint8Array))
+      throw new Error('plaintext must be Uint8Array');
 
     const key = await this.keyP;
     const nonce = this.nextNonce(); // 12 bytes
 
     const ct = new Uint8Array(
-      await crypto.subtle.encrypt({
-        name: "AES-GCM",
-        iv: toArrayBuffer(nonce)
-      },
-      key,
-      toArrayBuffer(plaintext)),
+      await crypto.subtle.encrypt(
+        {
+          name: 'AES-GCM',
+          iv: toArrayBuffer(nonce),
+        },
+        key,
+        toArrayBuffer(plaintext),
+      ),
     );
 
     const out = new Uint8Array(nonce.length + ct.length);
@@ -45,13 +51,18 @@ export class AesGcmCipher {
   }
 
   async decrypt(payload: Uint8Array): Promise<Uint8Array> {
-    if (!(payload instanceof Uint8Array)) throw new Error("ciphertext must be Uint8Array");
-    if (payload.length < 12 + 16) throw new Error("ciphertext too short"); // need nonce + tag
+    if (!(payload instanceof Uint8Array))
+      throw new Error('ciphertext must be Uint8Array');
+    if (payload.length < 12 + 16) throw new Error('ciphertext too short'); // need nonce + tag
 
     const nonce = toArrayBuffer(payload.subarray(0, 12));
     const ct = toArrayBuffer(payload.subarray(12));
     const key = await this.keyP;
-    const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: nonce }, key, ct);
+    const pt = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: nonce },
+      key,
+      ct,
+    );
 
     return new Uint8Array(pt);
   }
@@ -71,5 +82,5 @@ function toArrayBuffer(u8: Uint8Array): ArrayBuffer {
     return buf;
   }
 
-  throw new Error("Expected ArrayBuffer, got SharedArrayBuffer");
+  throw new Error('Expected ArrayBuffer, got SharedArrayBuffer');
 }

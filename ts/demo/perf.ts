@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import { AesGcmCipher } from '../src/AesGcmCipher.ts';
 
 function randomBytes(len: number): Uint8Array {
@@ -12,7 +14,7 @@ function randomBytes(len: number): Uint8Array {
 async function measureEncryptMBps(
   cipher: AesGcmCipher,
   size: number,
-  rounds: number
+  rounds: number,
 ): Promise<number> {
   const data = randomBytes(size);
   const start = performance.now();
@@ -28,7 +30,7 @@ async function measureEncryptMBps(
 async function measureDecryptMBps(
   cipher: AesGcmCipher,
   size: number,
-  rounds: number
+  rounds: number,
 ): Promise<number> {
   const data = randomBytes(size);
   const payloads: Uint8Array[] = [];
