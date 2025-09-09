@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AesGcmCipher } from '../src/AesGcmCipher.ts';
+import { AesGcmCipher } from '../src/AesGcmCipher.js';
 
 describe('AesGcmCipher', () => {
   const key = new Uint8Array(32); // 256-bit key

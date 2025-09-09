@@ -1,1 +1,1 @@
-export { AesGcmCipher } from './AesGcmCipher.ts';
+export { AesGcmCipher } from './AesGcmCipher.js';

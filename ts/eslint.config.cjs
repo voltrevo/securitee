@@ -1,6 +1,5 @@
 module.exports = [
   {
-    files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       parser: require('@typescript-eslint/parser'),
       parserOptions: {
@@ -13,20 +12,20 @@ module.exports = [
       import: require('eslint-plugin-import'),
     },
     rules: {
-      // Widely accepted rules
       semi: ['error', 'always'],
       'comma-dangle': ['error', 'always-multiline'],
       quotes: ['error', 'single', { avoidEscape: true }],
       'no-unused-vars': 'warn',
       'no-console': 'warn',
+      // Enforce .js extension in import statements for TypeScript files
       'import/extensions': [
         'error',
         'ignorePackages',
         {
-          js: 'never',
+          js: 'always',
           jsx: 'never',
-          ts: 'always',
-          tsx: 'always',
+          ts: 'never',
+          tsx: 'never',
         },
       ],
       '@typescript-eslint/no-unused-vars': 'warn',

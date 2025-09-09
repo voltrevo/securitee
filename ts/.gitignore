@@ -3,6 +3,7 @@ node_modules/
 
 # TypeScript
 *.tsbuildinfo
+dist
 
 # Logs
 npm-debug.log*
