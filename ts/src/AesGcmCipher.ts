@@ -34,10 +34,7 @@ export class AesGcmCipher {
 
     const ct = new Uint8Array(
       await crypto.subtle.encrypt(
-        {
-          name: 'AES-GCM',
-          iv: toArrayBuffer(nonce),
-        },
+        { name: 'AES-GCM', iv: toArrayBuffer(nonce) },
         key,
         toArrayBuffer(plaintext),
       ),
@@ -53,7 +50,9 @@ export class AesGcmCipher {
   async decrypt(payload: Uint8Array): Promise<Uint8Array> {
     if (!(payload instanceof Uint8Array))
       throw new Error('ciphertext must be Uint8Array');
-    if (payload.length < 12 + 16) throw new Error('ciphertext too short'); // need nonce + tag
+
+    // need nonce + tag
+    if (payload.length < 12 + 16) throw new Error('ciphertext too short');
 
     const nonce = toArrayBuffer(payload.subarray(0, 12));
     const ct = toArrayBuffer(payload.subarray(12));
@@ -70,7 +69,8 @@ export class AesGcmCipher {
   private nextNonce(): Uint8Array {
     const nonce = new Uint8Array(12);
     nonce.set(this.salt4, 0);
-    new DataView(nonce.buffer, 4, 8).setBigUint64(0, this.ctr++, false); // big-endian
+    // big-endian
+    new DataView(nonce.buffer, 4, 8).setBigUint64(0, this.ctr++, false);
     return nonce;
   }
 }
