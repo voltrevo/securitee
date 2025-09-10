@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "tsc --noEmit && eslint . && prettier --check .",
     "test": "vitest",
-    "build": "tsc"
+    "build": "rm -rf dist && tsc"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.43.0",
