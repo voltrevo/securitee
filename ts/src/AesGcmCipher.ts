@@ -1,6 +1,11 @@
 // AES-GCM Cipher (browser). Authenticated, 12-byte nonce.
 // Payload: [ 12-byte nonce | ciphertext&tag ]
 
+// Note: This cipher is designed to be used with an ephemeral key - generate
+// a new one for each instance. If you reuse a key with this cipher, you run the
+// risk of IV reuse (collision expected in about 2^16 key reuses), which can be
+// catastrophic.
+
 export class AesGcmCipher {
   private keyP: Promise<CryptoKey>;
   private salt4: Uint8Array;
