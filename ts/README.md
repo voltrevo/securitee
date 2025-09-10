@@ -26,3 +26,31 @@ const payload = await cipher.encrypt(plaintext); // returns [nonce | ciphertext&
 const decrypted = await cipher.decrypt(payload);
 console.log(new TextDecoder().decode(decrypted)); // "Hello, world!"
 ```
+
+## Diffie Hellman Key Exchange
+
+`KeyPairX25519` provides X25519 keypair generation and shared secret derivation, suitable for secure key exchange. You can use it with HKDF to derive a symmetric key for AES-GCM encryption.
+
+```ts
+import { KeyPairX25519 } from 'securitee';
+import { AesGcmCipher } from 'securitee';
+import { randBytes } from 'securitee';
+
+// Alice and Bob generate keypairs
+const alice = await KeyPairX25519.generate();
+const bob = await KeyPairX25519.generate();
+
+// Both derive the same AES key using each other's public key and a random salt
+const salt = randBytes(32); // 256-bit salt
+const aliceAesKey = await alice.deriveAesKey(bob.publicKeyRaw, salt);
+const bobAesKey = await bob.deriveAesKey(alice.publicKeyRaw, salt);
+
+// Use the derived key for AES-GCM
+const cipherAlice = new AesGcmCipher(aliceAesKey);
+const plaintext = new TextEncoder().encode('Secret message from Alice');
+const payload = await cipherAlice.encrypt(plaintext);
+
+const cipherBob = new AesGcmCipher(bobAesKey);
+const decrypted = await cipherBob.decrypt(payload);
+console.log(new TextDecoder().decode(decrypted)); // "Secret message from Alice"
+```
