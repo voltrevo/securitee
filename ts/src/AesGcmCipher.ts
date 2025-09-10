@@ -1,6 +1,8 @@
 // AES-GCM Cipher (browser). Authenticated, 12-byte nonce.
 // Payload: [ 12-byte nonce | ciphertext&tag ]
 
+import { randBytes, toArrayBuffer } from './util.js';
+
 // Note: This cipher is designed to be used with an ephemeral key - generate
 // a new one for each instance. If you reuse a key with this cipher, you run the
 // risk of IV reuse (collision expected in about 2^16 key reuses), which can be
@@ -27,7 +29,7 @@ export class AesGcmCipher {
       ['encrypt', 'decrypt'],
     );
 
-    this.salt4 = crypto.getRandomValues(new Uint8Array(4));
+    this.salt4 = randBytes(4);
   }
 
   async encrypt(plaintext: Uint8Array): Promise<Uint8Array> {
@@ -78,14 +80,4 @@ export class AesGcmCipher {
     new DataView(nonce.buffer, 4, 8).setBigUint64(0, this.ctr++, false);
     return nonce;
   }
-}
-
-function toArrayBuffer(u8: Uint8Array): ArrayBuffer {
-  const buf = u8.buffer.slice(u8.byteOffset, u8.byteOffset + u8.byteLength);
-
-  if (buf instanceof ArrayBuffer) {
-    return buf;
-  }
-
-  throw new Error('Expected ArrayBuffer, got SharedArrayBuffer');
 }
