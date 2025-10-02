@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { AesGcmCipher } from '../src/AesGcmCipher.ts';
+import { AesGcmCipher } from '../src/AesGcmCipher.js';
 
 function randomBytes(len: number): Uint8Array {
   const arr = new Uint8Array(len);
